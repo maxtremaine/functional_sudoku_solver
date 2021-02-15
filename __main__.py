@@ -1,3 +1,3 @@
-from src.puzzle import get_cell_values
+from src.puzzle import validate_puzzle
 
-print(get_cell_values([0, 1, 3])('1234'))
+print(validate_puzzle('________1________2________3________4________5________6________7________8________9'))

@@ -40,15 +40,26 @@ def get_related_cells(cell_index):
     }
     return list(unique_related_cells)
 
-# Composites
-
 def get_cell_values(cell_indexes):
     return lambda sudoku_string:[
         sudoku_string[cell_index] for cell_index in cell_indexes
     ]
 
+# Composites
+
 def validate_puzzle(sudoku_string):
     valid_string = validate_sudoku_string(sudoku_string)
     if not valid_string:
         return ( 'Invalid sudoku string.', None )
+
+    group_indexes = [ x for x in puzzle_rules['groups'] ]
+    groups = [ get_cell_values(x)(sudoku_string) for x in group_indexes ]
+    group_strings = [ ''.join(x) for x in groups ]
+    group_validities = [ validate_group(x) for x in group_strings ]
+    invalid_results = [ x for x in group_validities if x == False ]
+    is_valid = len(invalid_results) == 0
+
+    return ( None, is_valid )
+
+
     
