@@ -1,1 +1,3 @@
-from src.puzzle import puzzle_rules
+from src.puzzle import get_cell_values
+
+print(get_cell_values([0, 1, 3])('1234'))

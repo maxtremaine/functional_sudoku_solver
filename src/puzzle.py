@@ -1,6 +1,8 @@
 import json
 import re
 
+# Components
+
 with open('src/puzzle_rules.json', 'r') as f:
     puzzle_rules = json.load(f)
 
@@ -11,14 +13,18 @@ def validate_sudoku_string(sudoku_string):
         return False
     return True
 
-def validate_cell_index(cell_index):
+def validate_cell_index(cell_index: int):
     """If an input is less than 81, return True."""
-    try:
-        if cell_index > 80:
-            return False
-    except:
+    if cell_index > 80:
         return False
     return True
+
+def validate_group(group_string):
+    if len(group_string) != 9:
+        return False
+    numbers = [ x for x in group_string if x != '_' ]
+    number_set = { x for x in numbers }
+    return len(numbers) == len(number_set)
 
 def get_related_cells(cell_index):
     """Returns a list of related cells."""
@@ -34,9 +40,15 @@ def get_related_cells(cell_index):
     }
     return list(unique_related_cells)
 
+# Composites
+
 def get_cell_values(cell_indexes):
     return lambda sudoku_string:[
         sudoku_string[cell_index] for cell_index in cell_indexes
     ]
 
-print(get_cell_values([1, 2, 3])('0174'))
+def validate_puzzle(sudoku_string):
+    valid_string = validate_sudoku_string(sudoku_string)
+    if not valid_string:
+        return ( 'Invalid sudoku string.', None )
+    
