@@ -35,10 +35,8 @@ def get_related_cells(cell_index):
     return list(unique_related_cells)
 
 def get_cell_values(cell_indexes):
-    def _(sudoku_string):
-        return [
-            sudoku_string[cell_index] for cell_index in cell_indexes
-        ]
-    return _
+    return lambda sudoku_string:[
+        sudoku_string[cell_index] for cell_index in cell_indexes
+    ]
 
 print(get_cell_values([1, 2, 3])('0174'))
