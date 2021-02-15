@@ -7,27 +7,27 @@ from typing import Union, List
 with open('src/puzzle_rules.json', 'r') as f:
     puzzle_rules = json.load(f)
 
-def validate_sudoku_string(sudoku_string):
+def validate_sudoku_string(sudoku_string: str) -> bool:
     """If a string is 81 digits or underscores, return True."""
     pattern = re.compile('^(_|[1-9]){81}$')
     if pattern.match(sudoku_string) == None:
         return False
     return True
 
-def validate_cell_index(cell_index: int):
+def validate_cell_index(cell_index: int) -> bool:
     """If an input is less than 81, return True."""
     if cell_index > 80:
         return False
     return True
 
-def validate_group(group_string):
+def validate_group(group_string: str) -> bool:
     if len(group_string) != 9:
         return False
     numbers = [ x for x in group_string if x != '_' ]
     number_set = { x for x in numbers }
     return len(numbers) == len(number_set)
 
-def get_related_cells(cell_index):
+def get_related_cells(cell_index: int) -> List[int]:
     """Returns a list of related cells."""
     related_groups = [
         n for n in puzzle_rules['groups']
@@ -46,8 +46,10 @@ def get_cell_values(cell_indexes: List[int]) -> List[str]:
         sudoku_string[cell_index] for cell_index in cell_indexes
     ]
 
-def switch_character(index: int, value: str):
-    return lambda sudoku_string: sudoku_string[0:index] + value + sudoku_string[index + 1:]
+def switch_character(index: int, value: str) -> str:
+    return lambda sudoku_string: (
+        sudoku_string[0:index] + value + sudoku_string[index + 1:]
+    )
 
 def missing_digits(group_string: Union[List[str], str]) -> List[str]:
     """Returns the missing digits (from 1 to 9) as strings."""
