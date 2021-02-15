@@ -1,5 +1,6 @@
 import json
 import re
+from typing import Union, List
 
 # Components
 
@@ -40,10 +41,20 @@ def get_related_cells(cell_index):
     }
     return list(unique_related_cells)
 
-def get_cell_values(cell_indexes):
+def get_cell_values(cell_indexes: List[int]) -> List[str]:
     return lambda sudoku_string:[
         sudoku_string[cell_index] for cell_index in cell_indexes
     ]
+
+def switch_character(index: int, value: str):
+    return lambda sudoku_string: sudoku_string[0:index] + value + sudoku_string[index + 1:]
+
+def missing_digits(group_string: Union[List[str], str]) -> List[str]:
+    """Returns the missing digits (from 1 to 9) as strings."""
+    return [ str(x) for x in range(1, 10) if str(x) not in group_string ]
+
+def is_character(string: str) -> bool:
+    return len(string) == 1
 
 # Composites
 
