@@ -39,10 +39,10 @@ def missing_digits(group_string: Union[List[str], str]) -> List[str]:
 
 # Composites
 
-def validate_puzzle(sudoku_string) -> Tuple[ bool, Union[ bool, str ] ]:
+def validate_puzzle(sudoku_string) -> Tuple[ str, bool ]:
     valid_string = validate_sudoku_string(sudoku_string)
     if not valid_string:
-        return True, 'Invalid sudoku string.'
+        return 'Invalid sudoku string.', False
 
     group_indexes = [ x for x in puzzle_rules['groups'] ]
     groups = [ get_cell_values(sudoku_string)(x) for x in group_indexes ]
@@ -51,7 +51,7 @@ def validate_puzzle(sudoku_string) -> Tuple[ bool, Union[ bool, str ] ]:
     invalid_results = [ x for x in group_validities if x == False ]
     is_valid = len(invalid_results) == 0
 
-    return False, is_valid
+    return '', is_valid
 
 def cell_degrees_of_freedom(index):
     def wrapped(sudoku_string):
