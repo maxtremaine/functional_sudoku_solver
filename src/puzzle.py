@@ -10,6 +10,9 @@ with open('src/puzzle_rules.json', 'r') as f:
 # Working with Sudoku files and strings.
 
 def validate_sudoku_file(sudoku_file:str) -> bool:
+    pattern = re.compile('^(\s|\n|\||_|-|[1-9]|[a-i]){167}$')
+    if pattern.match(sudoku_file) == None:
+        return False
     return True
 
 def sudoku_file_to_string(sudoku_file: str) -> str:
