@@ -1,7 +1,6 @@
 import json
 import re
 from typing import Union, List, Tuple, Callable
-from src.components import pipe, map
 
 # Load Sudoku puzzle rules.
 with open('src/puzzle_rules.json', 'r') as f:

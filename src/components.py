@@ -24,9 +24,7 @@ def less_than_81(cell_index: int) -> bool:
 
 def change_character(index: int, value: str) -> Callable[[str], str]:
     """Changes a character in a string."""
-    return lambda string: (
-        string[0:index] + value + string[index + 1:]
-    )
+    return lambda string: string[0:index] + value + string[index + 1:]
 
 def indexes_of_character(character: str) -> Callable[[str], List[int]]:
     """Finds all indexes of a character in a string."""
