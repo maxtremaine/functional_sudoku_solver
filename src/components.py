@@ -26,6 +26,10 @@ def change_character(index: int, value: str) -> Callable[[str], str]:
     """Changes a character in a string."""
     return lambda string: string[0:index] + value + string[index + 1:]
 
-def indexes_of_character(character: str) -> Callable[[str], List[int]]:
-    """Finds all indexes of a character in a string."""
-    return lambda string: [ i for (x, i) in zip(string, range(len(string))) if x == character ]
+def indexes_of_substring(substring: str) -> Callable[[str], List[int]]:
+    """Finds all indexes of a substring in a string."""
+    return lambda string: [ i for (x, i) in zip(string, range(len(string))) if x == substring ]
+
+def count_substring(substring: str) -> Callable[[str], int]:
+    """Counts the instances of a substring in a string."""
+    return lambda string: len(indexes_of_substring(substring)(string))
