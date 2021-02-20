@@ -1,4 +1,15 @@
 from typing import Callable, List
+from functools import reduce
+
+# Composition
+
+def pipe(*fs):
+    return lambda x: reduce(lambda v, f: f(v), fs, x)
+
+def map(fnc):
+    return lambda xs: [ fnc(x) for x in xs ]
+
+# Assertion
 
 def is_character(string: str) -> bool:
     return len(string) == 1
@@ -8,6 +19,8 @@ def less_than_81(cell_index: int) -> bool:
     if cell_index < 81:
         return True
     return False
+
+# Pure Functions
 
 def change_character(index: int, value: str) -> Callable[[str], str]:
     """Changes a character in a string."""

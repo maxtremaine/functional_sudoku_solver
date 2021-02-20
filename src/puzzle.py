@@ -1,27 +1,16 @@
 import json
 import re
 from typing import Union, List, Tuple, Callable
+from src.components import pipe, map
 
-# Components
-
+# Load Sudoku puzzle rules.
 with open('src/puzzle_rules.json', 'r') as f:
     puzzle_rules = json.load(f)
 
-def validate_sudoku_string(sudoku_string: str) -> bool:
-    """If a string is 81 digits or underscores, return True."""
-    pattern = re.compile('^(_|[1-9]){81}$')
-    if pattern.match(sudoku_string) == None:
-        return False
+# Working with Sudoku files and strings.
+
+def validate_sudoku_file(sudoku_file:str) -> bool:
     return True
-
-def get_cell_values(cell_indexes: List[int]) -> Callable[[str], List[str]]:
-    return lambda sudoku_string:[
-        sudoku_string[cell_index] for cell_index in cell_indexes
-    ]
-
-def missing_digits(group_string: Union[List[str], str]) -> List[str]:
-    """Returns the missing digits (from 1 to 9) as strings."""
-    return [ str(x) for x in range(1, 10) if str(x) not in group_string ]
 
 def sudoku_file_to_string(sudoku_file: str) -> str:
     character_list = [
@@ -30,21 +19,37 @@ def sudoku_file_to_string(sudoku_file: str) -> str:
     ]
     return ''.join(character_list)
 
+def validate_sudoku_string(sudoku_string: str) -> bool:
+    """If a string is 81 digits or underscores, return True."""
+    pattern = re.compile('^(_|[1-9]){81}$')
+    if pattern.match(sudoku_string) == None:
+        return False
+    return True
+
+def get_cell_values(sudoku_string: str) -> Callable[[List[int]], List[str]]:
+    return lambda cell_indexes:[
+        sudoku_string[cell_index] for cell_index in cell_indexes
+    ]
+
+def missing_digits(group_string: Union[List[str], str]) -> List[str]:
+    """Returns the missing digits (from 1 to 9) as strings."""
+    return [ str(x) for x in range(1, 10) if str(x) not in group_string ]
+
 # Composites
 
-def validate_puzzle(sudoku_string) -> Tuple[ Union[ str, None ], Union[ bool, None ] ]:
+def validate_puzzle(sudoku_string) -> Tuple[ bool, Union[ bool, str ] ]:
     valid_string = validate_sudoku_string(sudoku_string)
     if not valid_string:
-        return ( 'Invalid sudoku string.', None )
+        return True, 'Invalid sudoku string.'
 
     group_indexes = [ x for x in puzzle_rules['groups'] ]
-    groups = [ get_cell_values(x)(sudoku_string) for x in group_indexes ]
+    groups = [ get_cell_values(sudoku_string)(x) for x in group_indexes ]
     group_strings = [ ''.join(x) for x in groups ]
     group_validities = [ validate_group(x) for x in group_strings ]
     invalid_results = [ x for x in group_validities if x == False ]
     is_valid = len(invalid_results) == 0
 
-    return ( None, is_valid )
+    return False, is_valid
 
 def cell_degrees_of_freedom(index):
     def wrapped(sudoku_string):
