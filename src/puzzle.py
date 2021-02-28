@@ -54,13 +54,17 @@ def validate_puzzle(sudoku_string) -> Tuple[ str, bool ]:
     return '', is_valid
 
 def cell_degrees_of_freedom(index: int) -> Callable[[str], Tuple[ str, int ]]:
-    def cell_degrees_of_freedom_(sudoku_string):
+    def _cell_degrees_of_freedom(sudoku_string):
         if not validate_sudoku_string(sudoku_string):
             return 'Invalid sudoku string.', 0
 
-        related_cells = get_related_cells()
+        related_cells = get_related_cells(index)
+        cell_values = get_cell_values(sudoku_string)(related_cells)
+        underscores = [ x for x in cell_values if x == '_' ]
+
+        return '', len(underscores)
     
-    return cell_degrees_of_freedom_
+    return _cell_degrees_of_freedom
     
 def validate_group(group_string: str) -> bool:
     if len(group_string) != 9:
@@ -78,4 +82,7 @@ def get_related_cells(cell_index: int) -> List[int]:
     related_cells = [
         y for x in related_groups for y in x
     ]
-    return related_cells
+    unique_related_cells = {
+        x for x in related_cells
+    }
+    return list(unique_related_cells)
