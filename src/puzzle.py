@@ -53,10 +53,14 @@ def validate_puzzle(sudoku_string) -> Tuple[ str, bool ]:
 
     return '', is_valid
 
-def cell_degrees_of_freedom(index):
-    def wrapped(sudoku_string):
+def cell_degrees_of_freedom(index: int) -> Callable[[str], Tuple[ str, int ]]:
+    def cell_degrees_of_freedom_(sudoku_string):
         if not validate_sudoku_string(sudoku_string):
-            return ( 'Invalid sudoku string.', None )
+            return 'Invalid sudoku string.', 0
+
+        related_cells = get_related_cells()
+    
+    return cell_degrees_of_freedom_
     
 def validate_group(group_string: str) -> bool:
     if len(group_string) != 9:
@@ -74,7 +78,4 @@ def get_related_cells(cell_index: int) -> List[int]:
     related_cells = [
         y for x in related_groups for y in x
     ]
-    unique_related_cells = {
-        x for x in related_cells
-    }
-    return list(unique_related_cells)
+    return related_cells
