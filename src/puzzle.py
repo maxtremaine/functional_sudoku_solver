@@ -65,7 +65,7 @@ def cell_degrees_of_freedom(index: int) -> Callable[[str], Tuple[ str, int ]]:
         return '', len(underscores)
     
     return _cell_degrees_of_freedom
-    
+
 def validate_group(group_string: str) -> bool:
     if len(group_string) != 9:
         return False
