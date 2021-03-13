@@ -1,12 +1,16 @@
 from src.puzzle import (
     Cell,
     sudoku_file_to_string,
-    validate_sudoku_string
+    validate_sudoku_string,
+    validate_puzzle
 )
 from src.components import (
     change_character,
     count_substring
 )
+from time import time
+
+t0 = time()
 
 with open('io/start_puzzle.sudoku', 'r') as f:
     start_puzzle = f.read()
@@ -16,28 +20,38 @@ puzzle_error, puzzle_string = sudoku_file_to_string(start_puzzle)
 if puzzle_error:
     raise Exception(puzzle_error)
 
-blank_cells = count_substring('_')(puzzle_string)
-run = 1
+solved = False
+threads = [ puzzle_string ]
 
-while blank_cells != 0:
-    underscores = [
-        Cell(i, x, puzzle_string)
-        for i, x in enumerate(puzzle_string)
-        if x == '_'
-    ]
+while not solved:
+    new_threads = []
 
-    single_values = [
-        x for x in underscores if len(x['possible_values']) == 1
-    ]
+    for thread in threads:
+        underscores = [
+            Cell(i, x, thread)
+            for i, x in enumerate(thread)
+            if x == '_'
+        ]
 
-    for cell in single_values:
-        puzzle_string = change_character(cell['index'], cell['possible_values'][0])(puzzle_string)
-    
-    blank_cells = count_substring('_')(puzzle_string)
+        if len(underscores) == 0:
+            solved = True
+            new_threads = [ thread ]
+            break
 
-    print(f'Solved {str(len(single_values))} cells on run {str(run)}.')
+        sorted_underscores = sorted(
+            underscores,
+            key = lambda x: len(x['possible_values'])
+        )
 
-    run += 1
+        for possible_value in sorted_underscores[0]['possible_values']:
+            new_thread = change_character(sorted_underscores[0]['index'], possible_value)(thread)
+            new_threads.append(new_thread)
 
-print(puzzle_string)
-print(validate_sudoku_string(puzzle_string))
+    if len(new_threads) > 200:
+        print(f'{len(new_threads)} threads.')
+
+    threads = new_threads
+
+print(threads[0])
+print(validate_sudoku_string(threads[0]))
+print(f'Took {int(time() - t0)} seconds.')
