@@ -14,13 +14,6 @@ def validate_sudoku_file(sudoku_file:str) -> bool:
         return False
     return True
 
-def sudoku_file_to_string(sudoku_file: str) -> str:
-    character_list = [
-        sudoku_file[x]
-        for x in puzzle_rules['file_to_string_conversion_indexes']
-    ]
-    return ''.join(character_list)
-
 def validate_sudoku_string(sudoku_string: str) -> bool:
     """If a string is 81 digits or underscores, return True."""
     pattern = re.compile('^(_|[1-9]){81}$')
@@ -52,6 +45,19 @@ def validate_puzzle(sudoku_string) -> Tuple[ str, bool ]:
     is_valid = len(invalid_results) == 0
 
     return '', is_valid
+
+def sudoku_file_to_string(sudoku_file: str) -> Tuple[str, str]:
+    character_list = [
+        sudoku_file[x]
+        for x in puzzle_rules['file_to_string_conversion_indexes']
+    ]
+    sudoku_string = ''.join(character_list)
+    sudoku_string_error, valid_sudoku_string = validate_puzzle(sudoku_string)
+
+    if not valid_sudoku_string:
+        return 'Invalid sudoku string.', ''
+
+    return sudoku_string_error, sudoku_string
 
 def cell_degrees_of_freedom(index: int) -> Callable[[str], Tuple[ str, int ]]:
     def _cell_degrees_of_freedom(sudoku_string):
