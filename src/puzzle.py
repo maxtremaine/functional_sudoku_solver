@@ -6,6 +6,17 @@ from typing import Union, List, Tuple, Callable
 with open('src/puzzle_rules.json', 'r') as f:
     puzzle_rules = json.load(f)
 
+# Types.
+def Cell(index: int, value: str, sudoku_string: str) -> dict:
+    related_values = get_related_values(sudoku_string)(index)
+    return {
+        'index': index,
+        'value': value,
+        'related_cells': get_related_cells(index),
+        'related_values': related_values,
+        'possible_values': missing_digits(related_values)
+    }
+
 # Working with Sudoku files and strings.
 
 def validate_sudoku_file(sudoku_file:str) -> bool:
@@ -21,14 +32,14 @@ def validate_sudoku_string(sudoku_string: str) -> bool:
         return False
     return True
 
-def get_cell_values(sudoku_string: str) -> Callable[[List[int]], List[str]]:
-    return lambda cell_indexes:[
-        sudoku_string[cell_index] for cell_index in cell_indexes
+def get_indexed_values(sudoku_string: str) -> Callable[[List[int]], List[str]]:
+    return lambda indexes: [
+        sudoku_string[index] for index in indexes
     ]
 
-def missing_digits(group_string: Union[List[str], str]) -> List[str]:
+def missing_digits(values: List[str]) -> List[str]:
     """Returns the missing digits (from 1 to 9) as strings."""
-    return [ str(x) for x in range(1, 10) if str(x) not in group_string ]
+    return [ str(x) for x in range(1, 10) if str(x) not in values ]
 
 # Composites
 
@@ -38,7 +49,7 @@ def validate_puzzle(sudoku_string) -> Tuple[ str, bool ]:
         return 'Invalid sudoku string.', False
 
     group_indexes = [ x for x in puzzle_rules['groups'] ]
-    groups = [ get_cell_values(sudoku_string)(x) for x in group_indexes ]
+    groups = [ get_indexed_values(sudoku_string)(x) for x in group_indexes ]
     group_strings = [ ''.join(x) for x in groups ]
     group_validities = [ validate_group(x) for x in group_strings ]
     invalid_results = [ x for x in group_validities if x == False ]
@@ -92,3 +103,10 @@ def get_related_cells(cell_index: int) -> List[int]:
         x for x in related_cells
     }
     return list(unique_related_cells)
+
+def get_related_values(sudoku_string: str) -> Callable[[int], List[str]]:
+    return lambda cell_index: list({ 
+        sudoku_string[x]
+        for x in get_related_cells(cell_index)
+        if sudoku_string[x] != '_'
+    })
