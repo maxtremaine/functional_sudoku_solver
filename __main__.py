@@ -18,10 +18,4 @@ underscores = [
     if x == '_'
 ]
 
-prioritized_underscores = sorted(
-    underscores,
-    key = lambda underscore: underscore['degrees_of_freedom'],
-    reverse = True
-)
-
-print(prioritized_underscores)
+print(underscores)
