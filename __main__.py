@@ -45,9 +45,11 @@ while not solved:
 
         for possible_value in sorted_underscores[0]['possible_values']:
             new_thread = change_character(sorted_underscores[0]['index'], possible_value)(thread)
-            new_threads.append(new_thread)
 
-    if len(new_threads) > 200:
+            if validate_puzzle(new_thread)[1]:
+                new_threads.append(new_thread)
+
+    if len(new_threads) > 100:
         print(f'{len(new_threads)} threads.')
 
     threads = new_threads
