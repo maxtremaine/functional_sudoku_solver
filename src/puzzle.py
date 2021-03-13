@@ -6,7 +6,7 @@ from typing import Union, List, Tuple, Callable
 with open('src/puzzle_rules.json', 'r') as f:
     puzzle_rules = json.load(f)
 
-# Types.
+# Factories.
 def Cell(index: int, value: str, sudoku_string: str) -> dict:
     related_values = get_related_values(sudoku_string)(index)
     return {
