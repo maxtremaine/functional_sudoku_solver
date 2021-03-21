@@ -8,7 +8,7 @@ with open('src/puzzle_rules.json', 'r') as f:
 
 # Factories.
 def Cell(index: int, value: str, sudoku_string: str) -> dict:
-    related_values = get_related_values(sudoku_string)(index)
+    related_values = get_related_numbers(sudoku_string)(index)
     return {
         'index': index,
         'value': value,
@@ -63,12 +63,16 @@ def sudoku_file_to_string(sudoku_file: str) -> Tuple[str, str]:
         for x in puzzle_rules['file_to_string_conversion_indexes']
     ]
     sudoku_string = ''.join(character_list)
-    sudoku_string_error, valid_sudoku_string = validate_puzzle(sudoku_string)
+    is_valid_sudoku_string = validate_sudoku_string(sudoku_string)
 
-    if not valid_sudoku_string:
+    if not is_valid_sudoku_string:
         return 'Invalid sudoku string.', ''
 
-    return sudoku_string_error, sudoku_string
+    return '', sudoku_string
+
+def sudoku_string_to_file(sudoku_string) -> Tuple[str, str]:
+    empty_puzzle = puzzle_rules['empty_grid']
+    
 
 def cell_degrees_of_freedom(index: int) -> Callable[[str], Tuple[ str, int ]]:
     def _cell_degrees_of_freedom(sudoku_string):
@@ -104,7 +108,7 @@ def get_related_cells(cell_index: int) -> List[int]:
     }
     return list(unique_related_cells)
 
-def get_related_values(sudoku_string: str) -> Callable[[int], List[str]]:
+def get_related_numbers(sudoku_string: str) -> Callable[[int], List[str]]:
     return lambda cell_index: list({ 
         sudoku_string[x]
         for x in get_related_cells(cell_index)
